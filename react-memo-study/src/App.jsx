@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getMemos } from "./api/memo.jsx";
-import MemoForm from "./components/MemoForm.jsx";
+import MemoSearch from "./components/MemoSearch.jsx";
 import MemoList from "./components/MemoList.jsx";
 
 function App() {
@@ -8,13 +8,19 @@ function App() {
   const [memos, setMemos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null); 
+  const [inputValue, setInputValue] = useState('');
+  const [searchQuery, setSearchQuery] = useState(''); 
 
-  const fetchMemos = async () => {
+  useEffect(() => {
+    fetchMemos({ q: searchQuery });
+  }, [searchQuery]);
+
+  const fetchMemos = async (params ={}) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const data = await getMemos();
+      const data = await getMemos(params);
       setMemos(data.items);
     } catch(err) {
       console.error(err);
@@ -24,13 +30,13 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    fetchMemos();
-  }, []);
+  const handleSearch = () => {
+    setSearchQuery(inputValue);  // 버튼 클릭 시에만 적용
+  };
   
   return (
     <>
-      <MemoForm />
+      <MemoSearch onSearch={handleSearch} value={inputValue} onChange={(e) => setInputValue(e.target.value)}/>
 
       {isLoading && <p>로딩중..</p>}
 
