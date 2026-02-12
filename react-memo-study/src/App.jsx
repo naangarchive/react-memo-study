@@ -1,35 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import { getMemos } from "./api/memo.jsx";
+import MemoForm from "./components/MemoForm.jsx";
+import MemoList from "./components/MemoList.jsx";
 
 function App() {
-  const [count, setCount] = useState(0)
 
+  const [memos, setMemos] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null); 
+
+  const fetchMemos = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await getMemos();
+      setMemos(data.items);
+    } catch(err) {
+      console.error(err);
+      setError("데이터 못 불러옴");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchMemos();
+  }, []);
+  
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <MemoForm />
+
+      {isLoading && <p>로딩중..</p>}
+
+      {error && (
+        <div>
+        <p>에러: {error}</p>
+        {/* <button onClick={refetch}>다시 시도</button> */}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      )}
+
+      {!isLoading && !error && memos.length === 0 && (
+        <p>메모가 없다.</p>
+      )}
+
+      {!isLoading && !error && memos.length > 0 && (
+        <MemoList memos={memos} />
+      )}
+      
     </>
   )
 }
 
 export default App
+
