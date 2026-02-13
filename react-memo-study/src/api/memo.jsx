@@ -11,3 +11,14 @@ export const createMemo = async (payload) => {
   const response = await client.post('/memos', payload);
   return response.data;
 };
+
+// 수정
+export const updateMemo = async (id, payload) => {
+  const response = await client.patch(`/memos/${id}`, payload);
+  return response.data;
+};
+
+// 삭제
+export const deleteMemo = async (id) => {
+  await client.delete(`/memos/${id}`);
+};

@@ -1,9 +1,9 @@
 import { useState } from "react"
 
-function MemoForm({onCreate}) {
+function MemoForm({originalData, onSubmit}) {
 
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState(originalData?.title ?? '');
+  const [content, setContent] = useState(originalData?.content ?? '');
 
   const handleSumbit = (e) => {
     e.preventDefault();
@@ -13,7 +13,7 @@ function MemoForm({onCreate}) {
       return;
     }
 
-    onCreate(title, content);
+    onSubmit({title, content});
 
     setTitle('');
     setContent('');
@@ -23,7 +23,7 @@ function MemoForm({onCreate}) {
       <form onSubmit={handleSumbit}>
         <input type="text" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)}/>
         <textarea placeholder="내용" value={content} onChange={(e) => setContent(e.target.value)}></textarea>
-        <button type="submit">저장하기</button>
+        <button type="submit">{originalData ? '수정하기' : '저장하기'}</button>
       </form>
     </>
   )
