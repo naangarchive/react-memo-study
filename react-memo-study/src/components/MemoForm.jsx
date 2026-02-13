@@ -1,10 +1,29 @@
-function MemoForm() {
-  
+import { useState } from "react"
+
+function MemoForm({onCreate}) {
+
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+
+  const handleSumbit = (e) => {
+    e.preventDefault();
+
+    if (!title.trim() || !content.trim()) {
+      alert('제목과 내용을 모두 입력해주세요.');
+      return;
+    }
+
+    onCreate(title, content);
+
+    setTitle('');
+    setContent('');
+  }  
   return (
     <>
-      <form>
-        <input type="text" />
-        <button type="submit">검색</button>
+      <form onSubmit={handleSumbit}>
+        <input type="text" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)}/>
+        <textarea placeholder="내용" value={content} onChange={(e) => setContent(e.target.value)}></textarea>
+        <button type="submit">저장하기</button>
       </form>
     </>
   )

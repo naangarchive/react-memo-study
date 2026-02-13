@@ -5,3 +5,9 @@ export const getMemos = async (params = {}) => {
   const response = await client.get('/memos', { params });
   return response.data;
 };
+
+// 생성
+export const createMemo = async (payload) => {
+  const response = await client.post('/memos', payload);
+  return response.data;
+};

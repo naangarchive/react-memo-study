@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { getMemos } from "./api/memo.jsx";
+import { getMemos, createMemo } from "./api/memo.jsx";
 import MemoSearch from "./components/MemoSearch.jsx";
+import MemoForm from "./components/MemoForm.jsx";
 import MemoList from "./components/MemoList.jsx";
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
   const [memos, setMemos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null); 
+
   const [inputValue, setInputValue] = useState('');
   const [searchQuery, setSearchQuery] = useState(''); 
 
@@ -30,13 +32,28 @@ function App() {
     }
   }
 
+  //검색
   const handleSearch = () => {
     setSearchQuery(inputValue);  // 버튼 클릭 시에만 적용
   };
+
+  //추가
+  const handleCreate = async (title, content) => {
+    try {
+      const newMemo = await createMemo({ title, content });
+      setMemos(prev => [newMemo, ...prev]);  // 앞에 추가
+    } catch (err) {
+      console.error(err);
+      setError('추가에 실패했습니다');
+    }
+  };
+  
   
   return (
     <>
       <MemoSearch onSearch={handleSearch} value={inputValue} onChange={(e) => setInputValue(e.target.value)}/>
+
+      <MemoForm onCreate={handleCreate} />
 
       {isLoading && <p>로딩중..</p>}
 
